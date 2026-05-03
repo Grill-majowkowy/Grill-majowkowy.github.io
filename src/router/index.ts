@@ -12,7 +12,11 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/galeria',
-    component: () => import ('../views/Galery.vue')
+    component: () => import ('../views/GaleryPage.vue')
+  },
+  {
+    path: '/gra',
+    component: () => import ('../views/GamePage.vue')
   },
 ]
 
