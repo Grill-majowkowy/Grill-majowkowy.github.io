@@ -18,7 +18,9 @@
 
       <div id="container">
         <strong class="capitalize">{{ $route.params.id }}</strong>
-        <GrillAnimation />
+        <GrillAnimation 
+          text="Majówkowy Grill - projekt zaliczeniowy na informatykę"
+        />
       </div>
     </ion-content>
   </ion-page>

@@ -7,6 +7,10 @@ import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
+const props = defineProps({
+  text: { type: String, default: '' },
+})
+
 const container = ref(null)
 
 let scene
@@ -21,13 +25,57 @@ function buildGrill() {
   grill = new THREE.Group()
 
   // ===== BODY =====
+  // Canvas texture for the curved side of the body
+  const bodyCanvas = document.createElement('canvas')
+  bodyCanvas.width = 1024
+  bodyCanvas.height = 256
+  const bctx = bodyCanvas.getContext('2d')
+  bctx.fillStyle = '#1f1f1f'
+  bctx.fillRect(0, 0, 1024, 256)
+  if (props.text) {
+    bctx.textAlign = 'center'
+    bctx.textBaseline = 'middle'
+    bctx.font = 'bold 80px sans-serif'
+    const words = props.text.split(' ')
+    const lines = []
+    let line = ''
+    for (const word of words) {
+      const test = line ? line + ' ' + word : word
+      if (bctx.measureText(test).width > 940 && line) {
+        lines.push(line)
+        line = word
+      } else {
+        line = test
+      }
+    }
+    lines.push(line)
+    const lineH = 96
+    const startY = 128 - ((lines.length - 1) * lineH) / 2
+    lines.forEach((l, i) => {
+      const y = startY + i * lineH
+      // Glow / shadow for depth
+      bctx.shadowColor = 'rgba(255,255,255,0.6)'
+      bctx.shadowBlur = 18
+      bctx.fillStyle = '#ffffff'
+      bctx.fillText(l, 512, y)
+      // Second pass — crisp white on top
+      bctx.shadowBlur = 0
+      bctx.fillStyle = '#ffffff'
+      bctx.fillText(l, 512, y)
+    })
+  }
+  const bodyTex = new THREE.CanvasTexture(bodyCanvas)
+  const bodyMat = new THREE.MeshStandardMaterial({
+    color: 0x1f1f1f,
+    metalness: 0.8,
+    roughness: 0.35,
+    ...(props.text ? { map: bodyTex, emissiveMap: bodyTex, emissive: new THREE.Color(0x555555) } : {})
+  })
+  const bodySideMat = new THREE.MeshStandardMaterial({ color: 0x1f1f1f, metalness: 0.8, roughness: 0.35 })
+
   const body = new THREE.Mesh(
     new THREE.CylinderGeometry(2.3, 2.7, 1.8, 40),
-    new THREE.MeshStandardMaterial({
-      color: 0x1f1f1f,
-      metalness: 0.8,
-      roughness: 0.35
-    })
+    [bodyMat, bodySideMat, bodySideMat]
   )
   body.position.y = 0.8
   grill.add(body)
@@ -90,10 +138,7 @@ function buildGrill() {
   // ===== SIDE TABLE =====
   const table = new THREE.Mesh(
     new THREE.BoxGeometry(1.8, 0.12, 1.2),
-    new THREE.MeshStandardMaterial({
-      color: 0x444444,
-      metalness: 0.5
-    })
+    new THREE.MeshStandardMaterial({ color: 0x444444, metalness: 0.5 })
   )
 
   table.position.set(3, 1.2, 0)
