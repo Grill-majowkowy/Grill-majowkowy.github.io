@@ -94,7 +94,7 @@ const appPages = [
     mdIcon: barChartSharp,
   },
   {
-    title: 'Gra',
+    title: 'Kościany Poker',
     url: '/gra',
     iosIcon: gameControllerOutline,
     mdIcon: gameControllerSharp,

@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, defineComponent, h } from 'vue';
+import { ref, reactive } from 'vue';
 import {
   IonButtons, IonContent, IonHeader, IonMenuButton,
   IonPage, IonTitle, IonToolbar, IonButton, IonChip
