@@ -20,15 +20,11 @@
         <div class="player-section" :class="{ active: currentPlayer === 1, inactive: currentPlayer !== 1 }">
           <h2 class="player-title">Gracz 1</h2>
           <div class="dice-row">
-            <div
-              v-for="(die, idx) in players[0].dice"
-              :key="idx"
-              class="die"
-              :class="{ selected: die.selected, rolling: die.rolling }"
-              @click="currentPlayer === 1 && !turnEnded[0] ? toggleDie(0, idx) : null"
-            >
-              <DiceFace :value="die.value" />
-            </div>
+          <Dice 
+            :dice="players[0].dice" 
+            :disabled="currentPlayer !== 1 || turnEnded[0]" 
+            @toggle="toggleDie(0, $event)" 
+          />
           </div>
           <div class="controls" v-if="currentPlayer === 1 && !turnEnded[0]">
             <ion-button @click="rollSelected(0)" :disabled="players[0].dice.every(d => !d.selected) || players[0].rollsLeft === 0" color="primary">
@@ -48,17 +44,11 @@
         <!-- Gracz 2 -->
         <div class="player-section" :class="{ active: currentPlayer === 2, inactive: currentPlayer !== 2 }">
           <h2 class="player-title">Gracz 2</h2>
-          <div class="dice-row">
-            <div
-              v-for="(die, idx) in players[1].dice"
-              :key="idx"
-              class="die"
-              :class="{ selected: die.selected, rolling: die.rolling }"
-              @click="currentPlayer === 2 && !turnEnded[1] ? toggleDie(1, idx) : null"
-            >
-              <DiceFace :value="die.value" />
-            </div>
-          </div>
+          <Dice 
+            :dice="players[1].dice" 
+            :disabled="currentPlayer !== 2 || turnEnded[1]" 
+            @toggle="toggleDie(1, $event)" 
+          />
           <div class="controls" v-if="currentPlayer === 2 && !turnEnded[1]">
             <ion-button @click="rollSelected(1)" :disabled="players[1].dice.every(d => !d.selected) || players[1].rollsLeft === 0" color="primary">
               Przerzuć zaznaczone ({{ players[1].rollsLeft }} pozostało)
@@ -89,27 +79,7 @@ import {
   IonButtons, IonContent, IonHeader, IonMenuButton,
   IonPage, IonTitle, IonToolbar, IonButton, IonChip
 } from '@ionic/vue';
-
-// Pip positions for each die value (as [cx, cy] in a 60x60 grid)
-const pipLayouts: Record<number, [number, number][]> = {
-  1: [[30, 30]],
-  2: [[15, 15], [45, 45]],
-  3: [[15, 15], [30, 30], [45, 45]],
-  4: [[15, 15], [45, 15], [15, 45], [45, 45]],
-  5: [[15, 15], [45, 15], [30, 30], [15, 45], [45, 45]],
-  6: [[15, 12], [45, 12], [15, 30], [45, 30], [15, 48], [45, 48]],
-};
-
-const DiceFace = defineComponent({
-  props: { value: { type: Number, required: true } },
-  setup(props) {
-    return () => h('svg', { viewBox: '0 0 60 60', width: 52, height: 52 },
-      (pipLayouts[props.value] ?? []).map(([cx, cy]) =>
-        h('circle', { cx, cy, r: 6, fill: '#222' })
-      )
-    );
-  },
-});
+import Dice from './Dice.vue';
 
 interface Die {
   value: number;
@@ -231,49 +201,6 @@ function resetRound() {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 12px;
-}
-
-.dice-row {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin-bottom: 16px;
-}
-
-.die {
-  width: 68px;
-  height: 68px;
-  border-radius: 14px;
-  border: 3px solid #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  background: white;
-  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
-  user-select: none;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-  padding: 4px;
-  box-sizing: border-box;
-}
-
-.die.selected {
-  border-color: var(--ion-color-primary);
-  box-shadow: 0 0 0 3px rgba(var(--ion-color-primary-rgb), 0.35);
-  transform: translateY(-4px);
-}
-
-.die.rolling {
-  animation: shake 0.5s ease;
-}
-
-@keyframes shake {
-  0%, 100% { transform: rotate(0deg); }
-  20% { transform: rotate(-15deg) scale(1.1); }
-  40% { transform: rotate(15deg) scale(1.1); }
-  60% { transform: rotate(-10deg); }
-  80% { transform: rotate(10deg); }
 }
 
 .controls {
