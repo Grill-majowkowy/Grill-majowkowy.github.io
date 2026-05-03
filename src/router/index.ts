@@ -16,7 +16,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/gra',
-    component: () => import ('../views/GamePage.vue')
+    component: () => import ('../views/GamePage/GamePage.vue')
   },
 ]
 
