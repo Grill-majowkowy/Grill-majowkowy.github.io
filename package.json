@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
+  "description": "An Ionic project",
   "scripts": {
     "dev": "vite --host",
     "build": "vue-tsc && vite build",
@@ -42,5 +43,5 @@
     "vitest": "^0.34.6",
     "vue-tsc": "^2.1.10"
   },
-  "description": "An Ionic project"
+  "packageManager": "yarn@4.12.0"
 }
