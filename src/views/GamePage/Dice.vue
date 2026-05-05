@@ -12,16 +12,10 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { defineComponent, h } from 'vue';
 
-interface Die {
-  value: number;
-  selected: boolean;
-  rolling: boolean;
-}
-
-const pipLayouts: Record<number, [number, number][]> = {
+const pipLayouts = {
   1: [[30, 30]],
   2: [[15, 15], [45, 45]],
   3: [[15, 15], [30, 30], [45, 45]],
@@ -41,14 +35,12 @@ const DiceFace = defineComponent({
   },
 });
 
-const props = defineProps<{
-  dice: Die[];
-  disabled?: boolean;
-}>();
+const props = defineProps({
+  dice: { type: Array, required: true },
+  disabled: { type: Boolean, default: false },
+});
 
-const emit = defineEmits<{
-  (e: 'toggle', idx: number): void;
-}>();
+const emit = defineEmits(['toggle']);
 </script>
 
 <style>

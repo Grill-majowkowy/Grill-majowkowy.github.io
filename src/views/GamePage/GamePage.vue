@@ -73,7 +73,7 @@
   </ion-page>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, reactive } from 'vue';
 import {
   IonButtons, IonContent, IonHeader, IonMenuButton,
@@ -81,39 +81,28 @@ import {
 } from '@ionic/vue';
 import Dice from './Dice.vue';
 
-interface Die {
-  value: number;
-  selected: boolean;
-  rolling: boolean;
-}
-
-interface Player {
-  dice: Die[];
-  rollsLeft: number;
-}
-
-function randomDie(): number {
+function randomDie() {
   return Math.floor(Math.random() * 6) + 1;
 }
 
-function makeDice(): Die[] {
+function makeDice() {
   return Array.from({ length: 5 }, () => ({ value: randomDie(), selected: false, rolling: false }));
 }
 
-const players = reactive<Player[]>([
+const players = reactive([
   { dice: makeDice(), rollsLeft: 2 },
   { dice: makeDice(), rollsLeft: 2 },
 ]);
 
-const currentPlayer = ref<1 | 2>(1);
+const currentPlayer = ref(1);
 const turnEnded = reactive([false, false]);
 
-function toggleDie(playerIdx: number, dieIdx: number) {
+function toggleDie(playerIdx, dieIdx) {
   const die = players[playerIdx].dice[dieIdx];
   die.selected = !die.selected;
 }
 
-async function rollSelected(playerIdx: number) {
+async function rollSelected(playerIdx) {
   const player = players[playerIdx];
   if (player.rollsLeft <= 0) return;
 
@@ -133,7 +122,7 @@ async function rollSelected(playerIdx: number) {
   player.rollsLeft--;
 }
 
-function endTurn(playerIdx: number) {
+function endTurn(playerIdx) {
   // Odznacz wszystkie kości
   players[playerIdx].dice.forEach(d => { d.selected = false; });
   turnEnded[playerIdx] = true;
