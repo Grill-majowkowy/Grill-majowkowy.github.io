@@ -76,8 +76,8 @@ const appPages = [
     mdIcon: imagesSharp,
   },
   {
-    title: 'Tabele i listy',
-    url: '/tabele-i-listy',
+    title: 'Baza produktów grillowych',
+    url: '/produkty',
     iosIcon: listOutline,
     mdIcon: listSharp,
   },

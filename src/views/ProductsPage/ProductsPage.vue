@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <PageHeader text="Majówkowy Grill - strona główna" />
+    <PageHeader text="Baza produktów grillowych" />
 
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
@@ -11,9 +11,6 @@
 
       <div id="container">
         <strong class="capitalize">{{ $route.params.id }}</strong>
-        <GrillAnimation 
-          text="Majówkowy Grill - projekt zaliczeniowy na informatykę"
-        />
       </div>
     </ion-content>
   </ion-page>
@@ -21,8 +18,7 @@
 
 <script setup>
 import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
-import GrillAnimation from '../components/GrillAnimation.vue';
-import PageHeader from '../components/PageHeader.vue';
+import PageHeader from '../../components/PageHeader.vue';
 </script>
 
 <style scoped>

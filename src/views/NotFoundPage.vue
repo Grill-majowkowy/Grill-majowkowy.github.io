@@ -1,13 +1,6 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button color="primary"></ion-menu-button>
-        </ion-buttons>
-        <ion-title> --- brak takiej strony --- </ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <PageHeader text="--- brak takiej strony ---" />
 
     <ion-content :fullscreen="true">
       <ion-header collapse="condense">
@@ -26,6 +19,7 @@
 
 <script setup>
 import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import PageHeader from '../components/PageHeader.vue';
 </script>
 
 <style scoped>

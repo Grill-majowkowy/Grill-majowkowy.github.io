@@ -17,6 +17,10 @@ const routes = [
     path: '/gra',
     component: () => import ('../views/GamePage/GamePage.vue')
   },
+  {
+    path: '/produkty',
+    component: () => import ('../views/ProductsPage/ProductsPage.vue')
+  },
 ]
 
 const router = createRouter({
