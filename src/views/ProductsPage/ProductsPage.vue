@@ -6,9 +6,10 @@
       <div id="container">
         <ProductCard 
           v-for="product in products" 
-          v-model="newProduct"
           :key="product.id" 
           :product="product"
+          @delete="deleteProduct"
+          @edit="editProduct"
         />
       </div>
 
@@ -20,7 +21,8 @@
     </ion-content>
     <AddProductModal
       :isVisible="isAddProductModalVisible"
-      @addProduct="addProduct"
+      v-model="newProduct"
+      @addProduct="addOrEditProduct"
       @closeModal="closeModal"
     />
   </ion-page>
@@ -48,18 +50,41 @@ const products = reactive([
 ]);
 
 
-function addProduct(newProduct) {
+function addOrEditProduct(newProduct) {
   if (!newProduct.name.trim()) return;
-  products.push({
-    id: Date.now(),
-    name: newProduct.name.trim(),
-    description: newProduct.description.trim(),
-    price: newProduct.price ?? 0,
-  });
+  if (newProduct.id !== null) {
+    const product = products.find(p => p.id === newProduct.id);
+    product.name = newProduct.name.trim();
+    product.description = newProduct.description.trim();
+    product.price = newProduct.price ?? 0;
+  } else {
+    products.push({
+      id: Math.random(),
+      name: newProduct.name.trim(),
+      description: newProduct.description.trim(),
+      price: newProduct.price ?? 0,
+    });
+  }
+
   newProduct.name = '';
   newProduct.description = '';
   newProduct.price = null;
   closeModal();
+}
+
+let newProduct = reactive({ id: null, name: '', description: '', price: null });
+
+function editProduct(productId) {
+  const product = products.find(p => p.id === productId);
+  newProduct = {...product};
+  isAddProductModalVisible.value = true;
+}
+
+function deleteProduct(productId) {
+  const index = products.findIndex(p => p.id === productId);
+  if (index !== -1) {
+    products.splice(index, 1);
+  }
 }
 
 function closeModal() {

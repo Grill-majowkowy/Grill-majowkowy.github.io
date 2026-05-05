@@ -50,14 +50,14 @@
 
 <script setup>
 import { ref, reactive } from 'vue';
-import { IonButtons, IonContent, IonHeader, IonInput, IonList, IonModal, IonPage, IonTitle, IonToolbar, IonButton, IonIcon } from '@ionic/vue';
+import { IonButtons, IonContent, IonHeader, IonInput, IonList, IonModal, IonPage, IonTitle, IonToolbar, IonButton, IonIcon, IonItem } from '@ionic/vue';
 import { closeOutline } from 'ionicons/icons';
 
 const props = defineProps({
   isVisible: { type: Boolean, required: true },
 });
 
-const newProduct = reactive({ name: '', description: '', price: null });
+const newProduct = defineModel();
 
 const emit = defineEmits(['addProduct', 'closeModal']);
 </script>
