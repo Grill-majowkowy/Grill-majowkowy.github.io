@@ -10,7 +10,20 @@
       </ion-header>
 
       <div id="container">
-        <strong class="capitalize">{{ $route.params.id }}</strong>
+        <ion-text color="primary">
+          <h1>Projekt zaliczeniowy na informatykę</h1>
+        </ion-text>
+
+        <ion-text color="secondary">
+          <h2>Autor: Bartosz Marzol</h2>
+        </ion-text>
+
+        <ion-text color="tertiary">
+          Wersja aplikacji: <strong>{{ version }}</strong>
+        </ion-text>
+        <ion-text color="tertiary">
+          <h3>Data ostatniej aktualizacji: {{ lastUpdateDate }}</h3>
+        </ion-text>
       </div>
     </ion-content>
   </ion-page>
@@ -20,6 +33,8 @@
 import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
 import PageHeader from '../../components/PageHeader.vue';
 
+const version = 'v1';
+const lastUpdateDate = '2026-05-07';
 </script>
 
 <style scoped>
