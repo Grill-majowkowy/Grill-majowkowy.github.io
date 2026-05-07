@@ -44,9 +44,29 @@ import AddProductModal from './AddProductModal.vue';
 const isAddProductModalVisible = ref(false);
 
 const products = reactive([
-  { id: 1, name: 'Kiełbasa', description: 'Tradycyjna kiełbasa z grilla', price: 10 },
-  { id: 2, name: 'Stek', description: 'Soczysty stek z grilla', price: 25 },
-  { id: 3, name: 'Warzywa', description: 'Grillowane warzywa sezonowe', price: 15 },
+  { id: 1, 
+    name: 'Kiełbasa', 
+    description: 'Tradycyjna kiełbasa z grilla', 
+    price: 10,
+    shop: "biedronka",
+    isBought: false,
+  },
+  { 
+    id: 2, 
+    name: 'Stek', 
+    description: 'Soczysty stek z grilla', 
+    price: 25,
+    shop: "zabka",
+    isBought: true,
+  },
+  { 
+    id: 3, 
+    name: 'Warzywa', 
+    description: 'Grillowane warzywa sezonowe', 
+    price: 15,
+    shop: "lidl",
+    isBought: false,
+  },
 ]);
 
 
@@ -57,18 +77,24 @@ function addOrEditProduct(newProduct) {
     product.name = newProduct.name.trim();
     product.description = newProduct.description.trim();
     product.price = newProduct.price ?? 0;
+    product.shop = newProduct.shop;
+    product.isBought = newProduct.isBought;
   } else {
     products.push({
       id: Math.random(),
       name: newProduct.name.trim(),
       description: newProduct.description.trim(),
       price: newProduct.price ?? 0,
+      shop: newProduct.shop,
+      isBought: newProduct.isBought,
     });
   }
 
   newProduct.name = '';
   newProduct.description = '';
   newProduct.price = null;
+  newProduct.shop = '';
+  newProduct.isBought = false;
   closeModal();
 }
 
