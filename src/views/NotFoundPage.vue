@@ -30,6 +30,7 @@ import PageHeader from '../components/PageHeader.vue';
   right: 0;
   top: 50%;
   transform: translateY(-50%);
+  background-color: #b51b96;
 }
 
 #container strong {
@@ -40,7 +41,7 @@ import PageHeader from '../components/PageHeader.vue';
 #container p {
   font-size: 16px;
   line-height: 22px;
-  color: #8c8c8c;
+  color: #0f0303;
   margin: 0;
 }
 
