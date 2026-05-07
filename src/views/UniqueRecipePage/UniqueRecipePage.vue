@@ -1,0 +1,52 @@
+<template>
+  <ion-page>
+    <PageHeader text="Unikalne pomysły i receptury na grilla" />
+
+    <ion-content :fullscreen="true">
+      <ion-header collapse="condense">
+        <ion-toolbar>
+          <ion-title size="large">{{ $route.params.id }}</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
+      <div id="container">
+        <strong class="capitalize">{{ $route.params.id }}</strong>
+        <video controls :src="videoLink" autoplay></video>
+      </div>
+    </ion-content>
+  </ion-page>
+</template>
+
+<script setup>
+import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import PageHeader from '../../components/PageHeader.vue';
+
+const videoLink = 'https://i1.jbzd.com.pl/contents/2026/05/jZM5XZ1SPSA7SlEiyIOYg5EGyrj6ke1T.mp4';
+</script>
+
+<style scoped>
+#container {
+  text-align: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#container strong {
+  font-size: 20px;
+  line-height: 26px;
+}
+
+#container p {
+  font-size: 16px;
+  line-height: 22px;
+  color: #8c8c8c;
+  margin: 0;
+}
+
+#container a {
+  text-decoration: none;
+}
+</style>

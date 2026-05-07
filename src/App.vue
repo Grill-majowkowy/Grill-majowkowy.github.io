@@ -112,6 +112,12 @@ const appPages = [
     mdIcon: beerSharp,
   },
   {
+    title: 'Unikalne receptury',
+    url: '/unikalne-receptury',
+    iosIcon: mailOutline,
+    mdIcon: mailSharp,
+  },
+  {
     title: 'Formularz kontaktowy',
     url: '/kontakt',
     iosIcon: mailOutline,
@@ -123,42 +129,6 @@ const appPages = [
     iosIcon: informationCircleOutline,
     mdIcon: informationCircleSharp,
   },
-  // {
-  //   title: 'Inbox',
-  //   url: '/Inbox',
-  //   iosIcon: mailOutline,
-  //   mdIcon: mailSharp,
-  // },
-  // {
-  //   title: 'Outbox',
-  //   url: '/Outbox',
-  //   iosIcon: paperPlaneOutline,
-  //   mdIcon: paperPlaneSharp,
-  // },
-  // {
-  //   title: 'Favorites',
-  //   url: '/Favorites',
-  //   iosIcon: heartOutline,
-  //   mdIcon: heartSharp,
-  // },
-  // {
-  //   title: 'Archived',
-  //   url: '/Archived',
-  //   iosIcon: archiveOutline,
-  //   mdIcon: archiveSharp,
-  // },
-  // {
-  //   title: 'Trash',
-  //   url: '/Trash',
-  //   iosIcon: trashOutline,
-  //   mdIcon: trashSharp,
-  // },
-  // {
-  //   title: 'Spam',
-  //   url: '/Spam',
-  //   iosIcon: warningOutline,
-  //   mdIcon: warningSharp,
-  // },
 ];
 const labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
 

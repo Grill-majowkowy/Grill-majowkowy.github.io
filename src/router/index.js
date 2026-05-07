@@ -21,6 +21,14 @@ const routes = [
     path: '/produkty',
     component: () => import ('../views/ProductsPage/ProductsPage.vue')
   },
+  {
+    path: '/o-autorze',
+    component: () => import ('../views/AboutAuthorPage/AboutAuthorPage.vue')
+  },
+  {
+    path: '/unikalne-receptury',
+    component: () => import ('../views/UniqueRecipePage/UniqueRecipePage.vue')
+  },
 ]
 
 const router = createRouter({
