@@ -59,6 +59,8 @@ import {
   barChartSharp,
   appsOutline,
   appsSharp,
+  pizzaOutline,
+  pizzaSharp,
 } from 'ionicons/icons';
 
 const selectedIndex = ref(0);
@@ -114,8 +116,8 @@ const appPages = [
   {
     title: 'Unikalne receptury',
     url: '/unikalne-receptury',
-    iosIcon: mailOutline,
-    mdIcon: mailSharp,
+    iosIcon: pizzaOutline,
+    mdIcon: pizzaSharp,
   },
   {
     title: 'Formularz kontaktowy',
