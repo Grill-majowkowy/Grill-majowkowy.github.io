@@ -12,20 +12,15 @@
     <ion-content :fullscreen="true">
       <div class="game-container">
 
-        <div class="turn-banner" :class="'player-' + currentPlayerId">
-          Tura: Gracz {{ currentPlayerId }}
-        </div>
-
         <!-- Gracz 1 -->
         <div class="player-section" :class="{ active: currentPlayerId === 1, inactive: currentPlayerId !== 1 }">
           <h2 class="player-title">Gracz 1</h2>
-          <div class="dice-row">
           <Dice 
             :dice="players[0].dice" 
             :disabled="currentPlayerId !== 1 || players[0].turnEnded" 
             @toggle="toggleDie(0, $event)" 
           />
-          </div>
+          <ion-chip color="success">Obecna figura: {{ calculatePlayerDiceSchema(players[0].dice).name }} </ion-chip>
           <div class="controls" v-if="currentPlayerId === 1 && !players[0].turnEnded">
             <ion-button @click="rollSelectedDice(0)" :disabled="players[0].dice.every(d => !d.selected) || players[0].rollsLeft === 0" color="primary">
               Przerzuć zaznaczone ({{ players[0].rollsLeft }} pozostało)
@@ -39,7 +34,17 @@
           </div>
         </div>
 
-        <ion-divider></ion-divider>
+        <div class="result-info-banner">
+          <div>
+            Tura: Gracz {{ currentPlayerId }}
+          </div>
+          <ion-chip>
+            Gracz 1: {{ players[0].points }} punktów
+          </ion-chip>
+          <ion-chip>
+            Gracz 2: {{ players[1].points }} punktów
+          </ion-chip>
+        </div>
 
         <!-- Gracz 2 -->
         <div class="player-section" :class="{ active: currentPlayerId === 2, inactive: currentPlayerId !== 2 }">
@@ -49,6 +54,7 @@
             :disabled="currentPlayerId !== 2 || players[1].turnEnded" 
             @toggle="toggleDie(1, $event)" 
           />
+          <ion-chip v-if="currentPlayerId === 2" color="success">Obecna figura: {{ calculatePlayerDiceSchema(players[1].dice).name }} </ion-chip>
           <div class="controls" v-if="currentPlayerId === 2 && !players[1].turnEnded">
             <ion-button @click="rollSelectedDice(1)" :disabled="players[1].dice.every(d => !d.selected) || players[1].rollsLeft === 0" color="primary">
               Przerzuć zaznaczone ({{ players[1].rollsLeft }} pozostało)
@@ -74,16 +80,19 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
 import {
-  IonButtons, IonContent, IonHeader, IonMenuButton,
-  IonPage, IonTitle, IonToolbar, IonButton, IonChip
+  IonButton,
+  IonButtons,
+  IonChip,
+  IonContent, IonHeader, IonMenuButton,
+  IonPage, IonTitle, IonToolbar
 } from '@ionic/vue';
+import { reactive, ref } from 'vue';
 import Dice from './Dice.vue';
 
 const players = reactive([
-  { id: 1, dice: getEmptyDice(), rollsLeft: 2, turnEnded: false },
-  { id: 2, dice: getEmptyDice(), rollsLeft: 2, turnEnded: false },
+  { id: 1, dice: getEmptyDice(), rollsLeft: 2, turnEnded: false, points: 0 },
+  { id: 2, dice: getEmptyDice(), rollsLeft: 2, turnEnded: false, points: 0 },
 ]);
 
 const currentPlayerId = ref(1);
@@ -148,6 +157,16 @@ async function rollSelectedDice(playerId) {
   player.rollsLeft--;
 }
 
+function compareResultsAndAddPoints() {
+  const player1Points = calculatePlayerDiceSchema(players[0].dice).points;
+  const player2Points = calculatePlayerDiceSchema(players[1].dice).points;
+  if (player1Points === player2Points) {
+    return;
+  }
+  players[0].points += player1Points;
+  players[1].points += player2Points;
+}
+
 function endTurn(playerId) {
   // Odznacz wszystkie kości
   players[playerId].dice.forEach(d => { d.selected = false; });
@@ -156,10 +175,68 @@ function endTurn(playerId) {
   if (playerId === 0 && !players[1].turnEnded) {
     currentPlayerId.value = 2;
   }
+  if (playerId === 1 && players[1].turnEnded) {
+    compareResultsAndAddPoints();
+  } 
 }
+
+const diceSchemas = {
+  x0_nothing: {name: "nic", points: 0},
+  x1_pair: { name: "para", points: 1 },
+  x2_two_pairs: { name: "dwie pary", points: 2 },
+  x3_three_of_a_kind: { name: "trójka", points: 3 },
+  x4_small_straight: { name: "mały strit", points: 4 },
+  x5_big_straight: { name: "duży strit", points: 5 },
+  x6_full_house: { name: "full", points: 6 },
+  x7_four_of_a_kind: { name: "kareta", points: 7 },
+  x8_poker: { name: "poker", points: 8 },
+};
+
+function calculatePlayerDiceSchema(dice) {
+  const sortedValues = [...dice].sort((a, b) => a.value - b.value).map(d => d.value);
+  
+  
+  // DUŻY I MAŁY STRIT
+  // JSON Stringify jest potrzebne bo bez tego nawet jak tablice mają takie same wartości to są rozpoznawane jako 2 różne obiekty i porównanie zwraca false
+  const isSmallStraight = JSON.stringify(sortedValues) === JSON.stringify([1, 2, 3, 4, 5]);
+  const isBigStraight = JSON.stringify(sortedValues) === JSON.stringify([2, 3, 4, 5, 6]);
+  if (isSmallStraight) {
+    return diceSchemas.x4_small_straight;
+  }
+  if (isBigStraight) {
+    return diceSchemas.x5_big_straight;
+  }
+
+  // POZOSTAŁE UKŁADY (PARA, DWIE PARY, TRÓJKA, FULL, KARETA, POKER)
+  const cumulatedValues = {
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+  };
+  sortedValues.forEach((value, index) => {
+    cumulatedValues[value]++;
+  });
+  const isPoker = Object.values(cumulatedValues).includes(5);
+  const isFourOfAKind = Object.values(cumulatedValues).includes(4);
+  const isFullHouse = Object.values(cumulatedValues).includes(3) && Object.values(cumulatedValues).includes(2);
+  const isThreeOfAKind = Object.values(cumulatedValues).includes(3) && !isFullHouse;
+  const isTwoPairs = Object.values(cumulatedValues).filter(count => count === 2).length === 2;
+  const isPair = Object.values(cumulatedValues).includes(2) && !isTwoPairs;
+  if (isPoker) return diceSchemas.x8_poker;
+  if (isFourOfAKind) return diceSchemas.x7_four_of_a_kind;
+  if (isFullHouse) return diceSchemas.x6_full_house;
+  if (isThreeOfAKind) return diceSchemas.x3_three_of_a_kind;
+  if (isTwoPairs) return diceSchemas.x2_two_pairs;
+  if (isPair) return diceSchemas.x1_pair; 
+  return diceSchemas.x0_nothing; // Zwraca nic jeśli nie ma żadnego układu
+} 
 
 function endRound() {
   cleanPlayersBoard();
+  
 }
 
 </script>
@@ -171,7 +248,7 @@ function endRound() {
   margin: 0 auto;
 }
 
-.turn-banner {
+.result-info-banner {
   text-align: center;
   font-size: 18px;
   font-weight: bold;
@@ -179,14 +256,7 @@ function endRound() {
   border-radius: 10px;
   margin-bottom: 16px;
   color: white;
-}
-
-.turn-banner.player-1 {
-  background: var(--ion-color-primary);
-}
-
-.turn-banner.player-2 {
-  background: var(--ion-color-secondary);
+  background: var(--ion-color-tertiary);
 }
 
 .player-section {
