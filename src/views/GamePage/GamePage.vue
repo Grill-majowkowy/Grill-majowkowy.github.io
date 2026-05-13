@@ -12,29 +12,29 @@
     <ion-content :fullscreen="true">
       <div class="game-container">
 
-        <div class="turn-banner" :class="'player-' + currentPlayer">
-          Tura: Gracz {{ currentPlayer }}
+        <div class="turn-banner" :class="'player-' + currentPlayerId">
+          Tura: Gracz {{ currentPlayerId }}
         </div>
 
         <!-- Gracz 1 -->
-        <div class="player-section" :class="{ active: currentPlayer === 1, inactive: currentPlayer !== 1 }">
+        <div class="player-section" :class="{ active: currentPlayerId === 1, inactive: currentPlayerId !== 1 }">
           <h2 class="player-title">Gracz 1</h2>
           <div class="dice-row">
           <Dice 
             :dice="players[0].dice" 
-            :disabled="currentPlayer !== 1 || turnEnded[0]" 
+            :disabled="currentPlayerId !== 1 || players[0].turnEnded" 
             @toggle="toggleDie(0, $event)" 
           />
           </div>
-          <div class="controls" v-if="currentPlayer === 1 && !turnEnded[0]">
-            <ion-button @click="rollSelected(0)" :disabled="players[0].dice.every(d => !d.selected) || players[0].rollsLeft === 0" color="primary">
+          <div class="controls" v-if="currentPlayerId === 1 && !players[0].turnEnded">
+            <ion-button @click="rollSelectedDice(0)" :disabled="players[0].dice.every(d => !d.selected) || players[0].rollsLeft === 0" color="primary">
               Przerzuć zaznaczone ({{ players[0].rollsLeft }} pozostało)
             </ion-button>
             <ion-button @click="endTurn(0)" color="success">
               Zatwierdź ruch
             </ion-button>
           </div>
-          <div class="turn-done" v-if="turnEnded[0]">
+          <div class="turn-done" v-if="players[0].turnEnded">
             <ion-chip color="success">Ruch zakończony</ion-chip>
           </div>
         </div>
@@ -42,30 +42,30 @@
         <ion-divider></ion-divider>
 
         <!-- Gracz 2 -->
-        <div class="player-section" :class="{ active: currentPlayer === 2, inactive: currentPlayer !== 2 }">
+        <div class="player-section" :class="{ active: currentPlayerId === 2, inactive: currentPlayerId !== 2 }">
           <h2 class="player-title">Gracz 2</h2>
           <Dice 
             :dice="players[1].dice" 
-            :disabled="currentPlayer !== 2 || turnEnded[1]" 
+            :disabled="currentPlayerId !== 2 || players[1].turnEnded" 
             @toggle="toggleDie(1, $event)" 
           />
-          <div class="controls" v-if="currentPlayer === 2 && !turnEnded[1]">
-            <ion-button @click="rollSelected(1)" :disabled="players[1].dice.every(d => !d.selected) || players[1].rollsLeft === 0" color="primary">
+          <div class="controls" v-if="currentPlayerId === 2 && !players[1].turnEnded">
+            <ion-button @click="rollSelectedDice(1)" :disabled="players[1].dice.every(d => !d.selected) || players[1].rollsLeft === 0" color="primary">
               Przerzuć zaznaczone ({{ players[1].rollsLeft }} pozostało)
             </ion-button>
             <ion-button @click="endTurn(1)" color="success">
               Zatwierdź ruch
             </ion-button>
           </div>
-          <div class="turn-done" v-if="turnEnded[1]">
+          <div class="turn-done" v-if="players[1].turnEnded">
             <ion-chip color="success">Ruch zakończony</ion-chip>
           </div>
         </div>
 
         <!-- Koniec rundy -->
-        <div class="round-end" v-if="turnEnded[0] && turnEnded[1]">
+        <div class="round-end" v-if="players[0].turnEnded && players[1].turnEnded">
           <p class="round-summary">Runda zakończona!</p>
-          <ion-button expand="block" @click="resetRound" color="warning">Nowa runda</ion-button>
+          <ion-button expand="block" @click="endRound" color="warning">Nowa runda</ion-button>
         </div>
 
       </div>
@@ -74,47 +74,73 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import {
   IonButtons, IonContent, IonHeader, IonMenuButton,
   IonPage, IonTitle, IonToolbar, IonButton, IonChip
 } from '@ionic/vue';
 import Dice from './Dice.vue';
 
-function randomDie() {
+const players = reactive([
+  { id: 1, dice: getEmptyDice(), rollsLeft: 2, turnEnded: false },
+  { id: 2, dice: getEmptyDice(), rollsLeft: 2, turnEnded: false },
+]);
+
+const currentPlayerId = ref(1);
+
+function cleanPlayersBoard() {
+  players[0].id = 1;
+  players[1].id = 2;
+  players[0].dice = getEmptyDice();
+  players[1].dice = getEmptyDice();
+  players[0].rollsLeft = 2;
+  players[1].rollsLeft = 2;
+  players[0].turnEnded = false;
+  players[1].turnEnded = false;
+  currentPlayerId.value = 1;
+}
+
+function rollDie() {
   return Math.floor(Math.random() * 6) + 1;
 }
 
-function makeDice() {
-  return Array.from({ length: 5 }, () => ({ value: randomDie(), selected: false, rolling: false }));
+function getEmptyDice() {
+  return Array.from({ length: 5 }, () => ({ 
+    value: 0, 
+    selected: true, 
+    rolling: false,
+  }));
 }
 
-const players = reactive([
-  { dice: makeDice(), rollsLeft: 2 },
-  { dice: makeDice(), rollsLeft: 2 },
-]);
-
-const currentPlayer = ref(1);
-const turnEnded = reactive([false, false]);
-
-function toggleDie(playerIdx, dieIdx) {
-  const die = players[playerIdx].dice[dieIdx];
-  die.selected = !die.selected;
+function rollDice() {
+  return Array.from({ length: 5 }, () => ({ 
+    value: rollDie(), 
+    selected: false, 
+    rolling: false,
+  }));
 }
 
-async function rollSelected(playerIdx) {
-  const player = players[playerIdx];
+function toggleDie(playerId, dieIdx) {
+  const die = players[playerId].dice[dieIdx];
+  if (players[playerId].rollsLeft <= 0) return; // nie można zaznaczać kości po wykorzystaniu wszystkich rzutów
+  if (die.value !== 0) { // nie roluj pustych kości
+    die.selected = !die.selected;
+  }
+}
+
+async function rollSelectedDice(playerId) {
+  const player = players[playerId];
   if (player.rollsLeft <= 0) return;
 
   const selectedDice = player.dice.filter(d => d.selected);
   if (selectedDice.length === 0) return;
 
-  // Animacja
+  // Animacja co trwa chwilę czasu (timeout)
   selectedDice.forEach(d => { d.rolling = true; });
   await new Promise(r => setTimeout(r, 500));
 
   selectedDice.forEach(d => {
-    d.value = randomDie();
+    d.value = rollDie();
     d.selected = false;
     d.rolling = false;
   });
@@ -122,25 +148,20 @@ async function rollSelected(playerIdx) {
   player.rollsLeft--;
 }
 
-function endTurn(playerIdx) {
+function endTurn(playerId) {
   // Odznacz wszystkie kości
-  players[playerIdx].dice.forEach(d => { d.selected = false; });
-  turnEnded[playerIdx] = true;
+  players[playerId].dice.forEach(d => { d.selected = false; });
+  players[playerId].turnEnded = true;
 
-  if (playerIdx === 0 && !turnEnded[1]) {
-    currentPlayer.value = 2;
+  if (playerId === 0 && !players[1].turnEnded) {
+    currentPlayerId.value = 2;
   }
 }
 
-function resetRound() {
-  players[0].dice = makeDice();
-  players[1].dice = makeDice();
-  players[0].rollsLeft = 2;
-  players[1].rollsLeft = 2;
-  turnEnded[0] = false;
-  turnEnded[1] = false;
-  currentPlayer.value = 1;
+function endRound() {
+  cleanPlayersBoard();
 }
+
 </script>
 
 <style scoped>

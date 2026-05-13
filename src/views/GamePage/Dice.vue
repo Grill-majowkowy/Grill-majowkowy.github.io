@@ -27,11 +27,18 @@ const pipLayouts = {
 const DiceFace = defineComponent({
   props: { value: { type: Number, required: true } },
   setup(props) {
-    return () => h('svg', { viewBox: '0 0 60 60', width: 52, height: 52 },
-      (pipLayouts[props.value] ?? []).map(([cx, cy]) =>
-        h('circle', { cx, cy, r: 6, fill: '#222' })
-      )
-    );
+    return () => {
+      if (props.value === 0) {
+        return h('svg', { viewBox: '0 0 60 60', width: 52, height: 52 },
+          h('text', { x: 30, y: 42, 'text-anchor': 'middle', 'font-size': 40, 'font-weight': 'bold', fill: '#222', 'font-family': 'sans-serif' }, '?')
+        );
+      }
+      return h('svg', { viewBox: '0 0 60 60', width: 52, height: 52 },
+        (pipLayouts[props.value] ?? []).map(([cx, cy]) =>
+          h('circle', { cx, cy, r: 6, fill: '#222' })
+        )
+      );
+    };
   },
 });
 

@@ -43,6 +43,7 @@ import {
   IonNote,
   IonRouterOutlet,
   IonSplitPane,
+  IonItemDivider,
 } from '@ionic/vue';
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
