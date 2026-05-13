@@ -53,20 +53,14 @@ const lastPhoto = ref(null);
 const savePhoto  = async (photo) => {
   try {
     const photoName = `photos/${Date.now()}.jpeg`;
-    if (isNative) {
-      await Filesystem.copy({
-          from: photo.path,
-          to: photoName,
-          directory: Directory.Data,
-        });
-    } else {
-      await Filesystem.writeFile({
-          path: photoName,
-          data: photo.base64String,
-          directory: Directory.Data,
-          recursive: true,
-        });
-    }
+    const response = await fetch(photo.webPath);
+    const blob = await response.blob();
+    await Filesystem.writeFile({
+      path: photoName,
+      data: blob,
+      directory: Directory.Data,
+      recursive: true,
+    });
   } catch (error) {
     console.error("Błąd podczas zapisywania zdjęcia:", error);
     alert("Nie udało się zapisać zdjęcia. Spróbuj ponownie.");
@@ -79,8 +73,7 @@ const takePhoto = async () => {
   let photo;
   try {
     photo = await Camera.getPhoto({
-      // natywnie korzysta z lepszego trybu, w przeglądarce zeby zapisac musimy miec base64, bo nie ma dostępu do zmiennej path w przeglądarce
-      resultType: isNative ? CameraResultType.Uri : CameraResultType.Base64, 
+      resultType: CameraResultType.Uri,
       quality: 90, // spoko jakość jeszcze, ale rozmiar mniejszy
       saveToGallery: false, // nie zapisujemy do galerii, zdjęcie tylko na uzytek aplikacji
     });
@@ -89,7 +82,7 @@ const takePhoto = async () => {
     alert("Nie udało się zrobić zdjęcia. Spróbuj ponownie.");
   }
   if (photo) {
-    lastPhoto.value = isNative ? photo.webPath : `data:image/jpeg;base64,${photo.base64String}`;
+    lastPhoto.value = photo.webPath;
     await savePhoto(photo);
   };
   
@@ -101,13 +94,14 @@ const getPhoto = async (photoName) => {
       path: photoName,
       directory: Directory.Data,
     });
-    return Capacitor.convertFileSrc(uri); // zamienia na webowy URL
+    return Capacitor.convertFileSrc(uri);
   } else {
     const result = await Filesystem.readFile({
       path: photoName,
       directory: Directory.Data,
     });
-    return `data:image/jpeg;base64,${result.data}`;
+    const blob = new Blob([result.data], { type: 'image/jpeg' });
+    return URL.createObjectURL(blob);
   }
 };
 
@@ -115,8 +109,7 @@ const openGallery = () => {
   window.location.href = "/galeria/";
 };
 
-// Po starcie aplikacji szukane jest w pamięci ostatnie zrobione zdjecie i wyświetlane tutaj
-onMounted(async () => {
+const loadLastPhoto = async () => {
   try {
     const { files } = await Filesystem.readdir({
       path: 'photos',
@@ -124,12 +117,16 @@ onMounted(async () => {
     });
     if (files.length > 0) {
       const latest = files.sort((a, b) => b.name.localeCompare(a.name))[0];
-      lastPhoto.value = await getPhoto(`photos/${latest.name}`);
+      const src = await getPhoto(`photos/${latest.name}`);
+      lastPhoto.value = src;
     }
-  } catch {
-    console.error("Nie można odczytać zdjęcia z katalogu.");
+  } catch (e) {
+    console.error("Nie można odczytać zdjęcia z katalogu:", e);
   }
-});
+}
+
+// Po starcie aplikacji szukane jest w pamięci ostatnie zrobione zdjecie i wyświetlane tutaj
+onMounted(loadLastPhoto);
 
 </script>
 

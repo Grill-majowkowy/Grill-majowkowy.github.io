@@ -48,7 +48,7 @@
 
 <script setup>
 import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonButton, IonIcon } from '@ionic/vue';
-import { IonCol, IonGrid, IonRow } from '@ionic/vue';
+import { IonCol, IonGrid, IonRow, IonImg } from '@ionic/vue';
 import PageHeader from '../../components/PageHeader.vue';
 import { ref, onMounted, onActivated } from 'vue';
 import { Filesystem, Directory } from "@capacitor/filesystem";
@@ -78,13 +78,14 @@ const getPhoto = async (photoName) => {
       path: photoName,
       directory: Directory.Data,
     });
-    return Capacitor.convertFileSrc(uri); // zamienia na webowy URL
+    return Capacitor.convertFileSrc(uri);
   } else {
     const result = await Filesystem.readFile({
       path: photoName,
       directory: Directory.Data,
     });
-    return `data:image/jpeg;base64,${result.data}`;
+    const blob = new Blob([result.data], { type: 'image/jpeg' });
+    return URL.createObjectURL(blob);
   }
 };
 
