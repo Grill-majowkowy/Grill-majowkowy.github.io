@@ -85,7 +85,8 @@ import {
   IonButtons,
   IonChip,
   IonContent, IonHeader, IonMenuButton,
-  IonPage, IonTitle, IonToolbar
+  IonPage, IonTitle, IonToolbar,
+  toastController,
 } from '@ionic/vue';
 import { reactive, ref } from 'vue';
 import Dice from './Dice.vue';
@@ -157,17 +158,35 @@ async function rollSelectedDice(playerId) {
   player.rollsLeft--;
 }
 
-function compareResultsAndAddPoints() {
+async function compareResultsAndAddPoints() {
   const player1Points = calculatePlayerDiceSchema(players[0].dice).points;
   const player2Points = calculatePlayerDiceSchema(players[1].dice).points;
+
+  let message;
+  let color;
   if (player1Points === player2Points) {
-    return;
+    message = 'Remis! Nikt nie dostaje punktów.';
+    color = 'warning';
+  } else if (player1Points > player2Points) {
+    players[0].points += player1Points;
+    message = `Gracz 1 wygrywa rundę! (+${player1Points} pkt)`;
+    color = 'success';
+  } else {
+    players[1].points += player2Points;
+    message = `Gracz 2 wygrywa rundę! (+${player2Points} pkt)`;
+    color = 'success';
   }
-  players[0].points += player1Points;
-  players[1].points += player2Points;
+
+  const toast = await toastController.create({
+    message,
+    duration: 2500,
+    color,
+    position: 'middle',
+  });
+  await toast.present();
 }
 
-function endTurn(playerId) {
+async function endTurn(playerId) {
   // Odznacz wszystkie kości
   players[playerId].dice.forEach(d => { d.selected = false; });
   players[playerId].turnEnded = true;
@@ -176,7 +195,7 @@ function endTurn(playerId) {
     currentPlayerId.value = 2;
   }
   if (playerId === 1 && players[1].turnEnded) {
-    compareResultsAndAddPoints();
+    await compareResultsAndAddPoints();
   } 
 }
 
