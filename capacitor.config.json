@@ -1,5 +1,5 @@
 {
   "appId": "com.grill.majowkowy",
   "appName": "vionic",
-  "webDir": "public"
+  "webDir": "dist"
 }
