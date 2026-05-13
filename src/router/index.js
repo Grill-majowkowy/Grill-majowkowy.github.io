@@ -29,6 +29,10 @@ const routes = [
     path: '/unikalne-receptury',
     component: () => import ('../views/UniqueRecipePage/UniqueRecipePage.vue')
   },
+  {
+    path: '/zdjecia-kielbasy',
+    component: () => import ('../views/TakePhotoPage/TakePhotoPage.vue')
+  },
 ]
 
 const router = createRouter({
