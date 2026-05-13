@@ -26,6 +26,7 @@
                   class="gallery-image" 
                   :src="image.src" 
                   alt="zdjęcie w galerii"
+                  @click="openLightbox(image.src)"
                 ></ion-img>
                 <ion-button
                   v-if="image.userPhoto"
@@ -41,6 +42,9 @@
             </ion-col>
           </ion-row>
         </ion-grid>
+      </div>
+      <div v-if="lightboxSrc" class="lightbox" @click="lightboxSrc = null">
+        <img :src="lightboxSrc" alt="pełny rozmiar" />
       </div>
     </ion-content>
   </ion-page>
@@ -61,6 +65,11 @@ const sizeLg = ref(4); // Rozmiar kolumny gdy ekran jest większy niż 992px
 const sizeXl = ref(3); // Rozmiar kolumny gdy ekran jest większy niż 1200px
 
 const images = ref([])
+const lightboxSrc = ref(null)
+
+const openLightbox = (src) => {
+  lightboxSrc.value = src;
+};
 const capacitorPlatform = Capacitor.getPlatform()
 const isNative = capacitorPlatform === 'android' || capacitorPlatform === 'ios';
 
@@ -151,5 +160,27 @@ ion-col {
   --padding-top: 6px;
   --padding-bottom: 6px;
   opacity: 0.85;
+}
+
+.gallery-image {
+  cursor: pointer;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+}
+
+.lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
 }
 </style>
