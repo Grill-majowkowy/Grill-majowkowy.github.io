@@ -85,6 +85,12 @@ const appPages = [
     mdIcon: appsSharp,
   },
   {
+    title: 'Zdjęcia kiełbasy',
+    url: '/zdjecia-kielbasy',
+    iosIcon: fastFoodOutline,
+    mdIcon: fastFoodSharp,
+  },
+  {
     title: 'Galeria',
     url: '/galeria',
     iosIcon: imagesOutline,
@@ -113,12 +119,6 @@ const appPages = [
     url: '/gra',
     iosIcon: gameControllerOutline,
     mdIcon: gameControllerSharp,
-  },
-  {
-    title: 'Zdjęcia kiełbasy',
-    url: '/zdjecia-kielbasy',
-    iosIcon: fastFoodOutline,
-    mdIcon: fastFoodSharp,
   },
   {
     title: 'Zlokalizuj grilla',
