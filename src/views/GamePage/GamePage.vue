@@ -77,7 +77,7 @@
 import { ref, reactive } from 'vue';
 import {
   IonButtons, IonContent, IonHeader, IonMenuButton,
-  IonPage, IonTitle, IonToolbar, IonButton, IonChip, IonDivider
+  IonPage, IonTitle, IonToolbar, IonButton, IonChip
 } from '@ionic/vue';
 import Dice from './Dice.vue';
 

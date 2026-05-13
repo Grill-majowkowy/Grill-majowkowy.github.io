@@ -1187,6 +1187,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@capacitor/ios@npm:^8.3.4":
+  version: 8.3.4
+  resolution: "@capacitor/ios@npm:8.3.4"
+  peerDependencies:
+    "@capacitor/core": ^8.3.0
+  checksum: 10c0/1725f5d38ef762c0bba6368fcf13be62758e0159041d83e7570b0163e99db6e6be4fab5f2863c32c2bd4d05e1dbea70bbe55def635a07862e850fae35ae83563
+  languageName: node
+  linkType: hard
+
 "@capacitor/keyboard@npm:8.0.3":
   version: 8.0.3
   resolution: "@capacitor/keyboard@npm:8.0.3"
@@ -6229,6 +6238,7 @@ __metadata:
     "@capacitor/core": "npm:8.3.1"
     "@capacitor/filesystem": "npm:^8.1.2"
     "@capacitor/haptics": "npm:8.0.2"
+    "@capacitor/ios": "npm:^8.3.4"
     "@capacitor/keyboard": "npm:8.0.3"
     "@capacitor/status-bar": "npm:8.0.2"
     "@ionic/vue": "npm:^8.0.0"

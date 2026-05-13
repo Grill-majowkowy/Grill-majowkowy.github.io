@@ -65,7 +65,7 @@ const capacitorPlatform = Capacitor.getPlatform()
 const isNative = capacitorPlatform === 'android' || capacitorPlatform === 'ios';
 
 async function loadDefaultImages() {
-  const res = await fetch('/pictures/manifest.json');
+  const res = await fetch('/pictures/manifest.json'); // ten manifest jest generowany podczas budowania aplikacji i zawiera listę domyślnych zdjęć które są wrzucone do folderu public/pictures
   const files = await res.json();
   files.forEach((pictureFile, i) => {
     images.value.push({ id: i + 1, src: `/pictures/${pictureFile}` })
