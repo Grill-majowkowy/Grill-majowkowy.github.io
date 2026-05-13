@@ -21,7 +21,23 @@
               :size-xl="sizeXl"
               :key="image.id"
             >
-              <img :src="image.src" class="gallery-image" />
+              <div class="image-wrapper">
+                <ion-img
+                  class="gallery-image" 
+                  :src="image.src" 
+                  alt="zdjęcie w galerii"
+                ></ion-img>
+                <ion-button
+                  v-if="image.userPhoto"
+                  class="delete-btn"
+                  fill="solid"
+                  color="danger"
+                  size="small"
+                  @click="deletePhoto(image)"
+                >
+                  <ion-icon :icon="trashOutline" />
+                </ion-button>
+              </div>
             </ion-col>
           </ion-row>
         </ion-grid>
@@ -31,11 +47,12 @@
 </template>
 
 <script setup>
-import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
+import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar, IonButton, IonIcon } from '@ionic/vue';
 import { IonCol, IonGrid, IonRow } from '@ionic/vue';
 import PageHeader from '../../components/PageHeader.vue';
 import { ref, onMounted, onActivated } from 'vue';
 import { Filesystem, Directory } from "@capacitor/filesystem";
+import { trashOutline } from 'ionicons/icons';
 
 const size = ref(6); // Standardowy rozmiar kolumny dla zwykłego ekranu telefonu
 const sizeSm = ref(4); // Rozmiar kolumny gdy ekran jest większy niż 576px
@@ -80,7 +97,7 @@ async function loadUserImages(){
     const sortedFiles = files.sort((a, b) => b.name.localeCompare(a.name));
     for (const file of sortedFiles) {
       const src = await getPhoto(`photos/${file.name}`);
-      images.value.push({ id: Date.now() + Math.random(), src });
+      images.value.push({ id: Date.now() + Math.random(), src, userPhoto: true, path: `photos/${file.name}` });
     }
   } catch {
     console.error("Nie można odczytać zdjęć z katalogu.");
@@ -90,6 +107,18 @@ async function loadUserImages(){
 async function loadAllImages() {
   await loadUserImages();
   await loadDefaultImages();
+}
+
+async function deletePhoto(image) {
+  try {
+    await Filesystem.deleteFile({
+      path: image.path,
+      directory: Directory.Data,
+    });
+    images.value = images.value.filter(i => i.id !== image.id);
+  } catch (error) {
+    console.error("Nie można usunąć zdjęcia:", error);
+  }
 }
 
 onMounted(loadAllImages);
@@ -103,5 +132,23 @@ ion-col {
 
 #container {
   position: absolute;
+}
+
+.image-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  --border-radius: 50%;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  --padding-top: 6px;
+  --padding-bottom: 6px;
+  opacity: 0.85;
 }
 </style>
