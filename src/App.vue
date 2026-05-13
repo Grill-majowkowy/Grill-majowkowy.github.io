@@ -8,7 +8,14 @@
             <ion-note>Poczuj woń grillowanej kiełbasy wprost z ekranu swojego lapptopa</ion-note>
 
             <ion-menu-toggle :auto-hide="false" v-for="(p, i) in appPages" :key="i">
-              <ion-item @click="selectedIndex = i" router-direction="root" :router-link="p.url" lines="none" :detail="false" class="hydrated" :class="{ selected: selectedIndex === i }">
+              <ion-item 
+                router-direction="root" 
+                :router-link="p.url" 
+                lines="none" 
+                :detail="false" 
+                class="hydrated" 
+                :class="{ selected: selectedIndex === i }"
+              >
                 <ion-icon aria-hidden="true" slot="start" :ios="p.iosIcon" :md="p.mdIcon"></ion-icon>
                 <ion-label>{{ p.title }}</ion-label>
               </ion-item>
@@ -37,7 +44,8 @@ import {
   IonRouterOutlet,
   IonSplitPane,
 } from '@ionic/vue';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
 import {
   mailOutline,
   mailSharp,
@@ -63,7 +71,11 @@ import {
   pizzaSharp,
 } from 'ionicons/icons';
 
-const selectedIndex = ref(0);
+const route = useRoute();
+// sprawdza który element menu jest aktualnie aktywny na podstawie ścieżki URL
+const selectedIndex = computed(() =>
+  appPages.findIndex(p => p.url === route.path)
+);
 const appPages = [
   {
     title: 'Strona główna',

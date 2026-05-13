@@ -45,10 +45,12 @@ import PageHeader from "../../components/PageHeader.vue";
 import { ref, onMounted } from "vue";
 import { Camera, CameraResultType } from "@capacitor/camera";
 import { Filesystem, Directory } from "@capacitor/filesystem";
+import { useRouter } from 'vue-router'
 
 const capacitorPlatform = Capacitor.getPlatform()
 const isNative = capacitorPlatform === 'android' || capacitorPlatform === 'ios';
 const lastPhoto = ref(null);
+const router = useRouter();
 
 const savePhoto  = async (photo) => {
   try {
@@ -106,7 +108,7 @@ const getPhoto = async (photoName) => {
 };
 
 const openGallery = () => {
-  window.location.href = "/galeria/";
+  router.push("/galeria");
 };
 
 const loadLastPhoto = async () => {
