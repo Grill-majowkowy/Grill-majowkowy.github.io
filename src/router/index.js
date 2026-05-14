@@ -33,6 +33,10 @@ const routes = [
     path: '/zdjecia-kielbasy',
     component: () => import ('../views/TakePhotoPage/TakePhotoPage.vue')
   },
+  {
+    path: '/kalkulator',
+    component: () => import ('../views/CalculatorPage/CalculatorPage.vue')
+  },
 ]
 
 const router = createRouter({
