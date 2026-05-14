@@ -37,6 +37,10 @@ const routes = [
     path: '/kalkulator',
     component: () => import ('../views/CalculatorPage/CalculatorPage.vue')
   },
+  {
+    path: '/wykres',
+    component: () => import ('../views/ChartPage/ChartPage.vue')
+  },
 ]
 
 const router = createRouter({

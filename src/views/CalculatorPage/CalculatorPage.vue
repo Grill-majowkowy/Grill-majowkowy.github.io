@@ -82,6 +82,7 @@
 
         <div v-if="results.length" class="results">
           <h3>Poziom promili w czasie:</h3>
+          <ion-button fill="solid" @click="openChartPage">Wyświetl jako wykres</ion-button>
           <ion-list lines="full">
             <ion-item v-for="row in results" :key="row.label">
               <ion-label>{{ row.label }}</ion-label>
@@ -106,6 +107,13 @@ import {
 import PageHeader from '../../components/PageHeader.vue';
 import { ref } from 'vue';
 import { computed } from 'vue';
+import { useRouter } from 'vue-router'
+
+const router = useRouter();
+
+const openChartPage = () => {
+  router.push({ path: '/wykres', state: { results: JSON.stringify(results.value) } });
+};
 
 const strongAmount   = ref(0);
 const strongStrength = ref(40);
@@ -118,7 +126,7 @@ const tolerance      = ref('medium');
 const bodyWeight     = ref(75);
 
 // Współczynnik Widmarka: 0.7 dla mężczyzn, używamy uproszczonego modelu
-// Zakładamy wagę 75 kg i płeć męską jako wartość bazową.
+// Zakładamy płeć męską jako wartość bazową.
 // Odporność wpływa na zakładaną wagę/współczynnik dystrybucji (r):
 const TOLERANCE_R = { low: 0.55, medium: 0.68, high: 0.78 };
 const ELIMINATION  = 0.15;  // promili/h – standardowa szybkość eliminacji alkoholu
