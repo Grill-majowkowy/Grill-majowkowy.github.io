@@ -21,8 +21,8 @@
 
 <script setup>
 import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
-import GrillAnimation from '../components/GrillAnimation.vue';
-import PageHeader from '../components/PageHeader.vue';
+import GrillAnimation from './GrillAnimation.vue';
+import PageHeader from '../../components/PageHeader.vue';
 </script>
 
 <style scoped>

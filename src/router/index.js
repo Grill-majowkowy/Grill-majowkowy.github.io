@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 const routes = [
   {
     path: '',
-    component: () => import ('../views/TitlePage.vue')
+    component: () => import ('../views/TitlePage/TitlePage.vue')
   },
   {
     path: '/:id',
