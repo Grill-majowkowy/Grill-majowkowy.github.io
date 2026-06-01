@@ -1,5 +1,6 @@
 import legacy from '@vitejs/plugin-legacy'
 import vue from '@vitejs/plugin-vue'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 import path from 'path'
 import { readdirSync } from 'fs'
 import { defineConfig } from 'vite'
@@ -40,6 +41,7 @@ export default defineConfig({
   plugins: [
     vue(),
     legacy(),
+    basicSsl(),
     picturesPlugin()
   ],
   resolve: {

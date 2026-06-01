@@ -41,6 +41,10 @@ const routes = [
     path: '/wykres',
     component: () => import ('../views/ChartPage/ChartPage.vue')
   },
+  {
+    path: '/zlokalizuj-grilla',
+    component: () => import ('../views/FindGrillPage/FindGrillPage.vue')
+  },
 ]
 
 const router = createRouter({
