@@ -1,13 +1,6 @@
 <template>
   <ion-page>
-    <ion-header :translucent="true">
-      <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-menu-button color="primary"></ion-menu-button>
-        </ion-buttons>
-        <ion-title>Kościany Poker</ion-title>
-      </ion-toolbar>
-    </ion-header>
+    <PageHeader text="Kościany Poker" />
 
     <ion-content :fullscreen="true">
       <div class="game-container">
@@ -90,6 +83,7 @@ import {
 } from '@ionic/vue';
 import { reactive, ref } from 'vue';
 import Dice from './Dice.vue';
+import PageHeader from '../../components/PageHeader.vue';
 
 const players = reactive([
   { id: 1, dice: getEmptyDice(), rollsLeft: 2, turnEnded: false, points: 0 },
