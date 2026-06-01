@@ -27,7 +27,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import PageHeader from '../../components/PageHeader.vue';
 
-// Fix Leaflet default marker icons broken by bundlers
+// Naprawia problem z ikonami Leaflet w Vite
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: new URL('leaflet/dist/images/marker-icon-2x.png', import.meta.url).href,
@@ -57,6 +57,7 @@ onUnmounted(() => {
   }
 });
 
+// W trybie webowym użyty jest toast z Ionic, w natywnym - z Capacitor
 async function showToast(message) {
   if (Capacitor.isNativePlatform()) {
     await Toast.show({ text: message, duration: 'long' });
