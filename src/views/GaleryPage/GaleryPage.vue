@@ -93,8 +93,7 @@ const getPhoto = async (photoName) => {
       path: photoName,
       directory: Directory.Data,
     });
-    const blob = new Blob([result.data], { type: 'image/jpeg' });
-    return URL.createObjectURL(blob);
+    return `data:image/jpeg;base64,${result.data}`;
   }
 };
 

@@ -52,14 +52,23 @@ const isNative = capacitorPlatform === 'android' || capacitorPlatform === 'ios';
 const lastPhoto = ref(null);
 const router = useRouter();
 
+const blobToBase64 = (blob) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+
 const savePhoto  = async (photo) => {
   try {
     const photoName = `photos/${Date.now()}.jpeg`;
     const response = await fetch(photo.webPath);
     const blob = await response.blob();
+    const base64 = await blobToBase64(blob);
     await Filesystem.writeFile({
       path: photoName,
-      data: blob,
+      data: base64,
       directory: Directory.Data,
       recursive: true,
     });
@@ -102,8 +111,7 @@ const getPhoto = async (photoName) => {
       path: photoName,
       directory: Directory.Data,
     });
-    const blob = new Blob([result.data], { type: 'image/jpeg' });
-    return URL.createObjectURL(blob);
+    return `data:image/jpeg;base64,${result.data}`;
   }
 };
 
