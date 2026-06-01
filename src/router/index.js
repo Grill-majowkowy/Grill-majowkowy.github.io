@@ -45,6 +45,10 @@ const routes = [
     path: '/zlokalizuj-grilla',
     component: () => import ('../views/FindGrillPage/FindGrillPage.vue')
   },
+  {
+    path: '/kontakt',
+    component: () => import ('../views/ContactFormPage/ContactFormPage.vue')
+  },
 ]
 
 const router = createRouter({
