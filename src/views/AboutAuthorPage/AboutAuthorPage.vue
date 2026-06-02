@@ -17,6 +17,9 @@
         <ion-text color="secondary">
           <h2>Autor: Bartosz Marzol</h2>
         </ion-text>
+        <ion-text color="secondary">
+          <h2>Numer indeksu: 165667</h2>
+        </ion-text>
 
         <ion-text color="tertiary">
           Wersja aplikacji: <strong>{{ version }}</strong>
@@ -33,8 +36,8 @@
 import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, IonToolbar } from '@ionic/vue';
 import PageHeader from '../../components/PageHeader.vue';
 
-const version = 'v1';
-const lastUpdateDate = '2026-05-07';
+const version = 'v1.2';
+const lastUpdateDate = '2026-06-02';
 </script>
 
 <style scoped>
